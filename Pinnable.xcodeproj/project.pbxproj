@@ -13,6 +13,12 @@
 		731573931D669B100037EDC2 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573921D669B100037EDC2 /* MessagesViewController.swift */; };
 		731573961D669B100037EDC2 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 731573941D669B100037EDC2 /* MainInterface.storyboard */; };
 		731573981D669B100037EDC2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 731573971D669B100037EDC2 /* Assets.xcassets */; };
+		731573A71D669C1A0037EDC2 /* ISHHoverBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 731573A61D669C1A0037EDC2 /* ISHHoverBar.m */; };
+		731573BC1D669C790037EDC2 /* VCMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B61D669C790037EDC2 /* VCMapView.swift */; };
+		731573BD1D669C790037EDC2 /* LocationSearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B71D669C790037EDC2 /* LocationSearchTable.swift */; };
+		731573BE1D669C790037EDC2 /* PinnedLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B81D669C790037EDC2 /* PinnedLocation.swift */; };
+		731573BF1D669C790037EDC2 /* AddressParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B91D669C790037EDC2 /* AddressParser.swift */; };
+		731573C01D669C790037EDC2 /* VCLocationManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573BA1D669C790037EDC2 /* VCLocationManagement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +55,15 @@
 		731573951D669B100037EDC2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		731573971D669B100037EDC2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		731573991D669B100037EDC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		731573A31D669C190037EDC2 /* MessagesExtension-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MessagesExtension-Bridging-Header.h"; sourceTree = "<group>"; };
+		731573A51D669C1A0037EDC2 /* ISHHoverBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISHHoverBar.h; sourceTree = "<group>"; };
+		731573A61D669C1A0037EDC2 /* ISHHoverBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISHHoverBar.m; sourceTree = "<group>"; };
+		731573B41D669C780037EDC2 /* Pinnable-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Pinnable-Bridging-Header.h"; sourceTree = "<group>"; };
+		731573B61D669C790037EDC2 /* VCMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VCMapView.swift; sourceTree = "<group>"; };
+		731573B71D669C790037EDC2 /* LocationSearchTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationSearchTable.swift; sourceTree = "<group>"; };
+		731573B81D669C790037EDC2 /* PinnedLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinnedLocation.swift; sourceTree = "<group>"; };
+		731573B91D669C790037EDC2 /* AddressParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressParser.swift; sourceTree = "<group>"; };
+		731573BA1D669C790037EDC2 /* VCLocationManagement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VCLocationManagement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +83,6 @@
 			children = (
 				731573821D669B100037EDC2 /* Pinnable */,
 				731573911D669B100037EDC2 /* MessagesExtension */,
-				7315738E1D669B100037EDC2 /* Frameworks */,
 				731573811D669B100037EDC2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -97,17 +111,44 @@
 				7315738F1D669B100037EDC2 /* Messages.framework */,
 			);
 			name = Frameworks;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		731573911D669B100037EDC2 /* MessagesExtension */ = {
 			isa = PBXGroup;
 			children = (
 				731573921D669B100037EDC2 /* MessagesViewController.swift */,
+				731573B61D669C790037EDC2 /* VCMapView.swift */,
+				731573B71D669C790037EDC2 /* LocationSearchTable.swift */,
+				731573B81D669C790037EDC2 /* PinnedLocation.swift */,
+				731573B91D669C790037EDC2 /* AddressParser.swift */,
+				731573BA1D669C790037EDC2 /* VCLocationManagement.swift */,
 				731573941D669B100037EDC2 /* MainInterface.storyboard */,
 				731573971D669B100037EDC2 /* Assets.xcassets */,
+				731573C21D669CBA0037EDC2 /* Bridging Headers */,
+				731573C11D669CB20037EDC2 /* HoverBar */,
 				731573991D669B100037EDC2 /* Info.plist */,
 			);
 			path = MessagesExtension;
+			sourceTree = "<group>";
+		};
+		731573C11D669CB20037EDC2 /* HoverBar */ = {
+			isa = PBXGroup;
+			children = (
+				7315738E1D669B100037EDC2 /* Frameworks */,
+				731573A51D669C1A0037EDC2 /* ISHHoverBar.h */,
+				731573A61D669C1A0037EDC2 /* ISHHoverBar.m */,
+			);
+			name = HoverBar;
+			sourceTree = "<group>";
+		};
+		731573C21D669CBA0037EDC2 /* Bridging Headers */ = {
+			isa = PBXGroup;
+			children = (
+				731573A31D669C190037EDC2 /* MessagesExtension-Bridging-Header.h */,
+				731573B41D669C780037EDC2 /* Pinnable-Bridging-Header.h */,
+			);
+			name = "Bridging Headers";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -160,11 +201,13 @@
 					7315737F1D669B100037EDC2 = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = DHY5YM53QB;
+						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 					};
 					731573891D669B100037EDC2 = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = DHY5YM53QB;
+						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -213,7 +256,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				731573BC1D669C790037EDC2 /* VCMapView.swift in Sources */,
+				731573BD1D669C790037EDC2 /* LocationSearchTable.swift in Sources */,
 				731573931D669B100037EDC2 /* MessagesViewController.swift in Sources */,
+				731573C01D669C790037EDC2 /* VCLocationManagement.swift in Sources */,
+				731573BE1D669C790037EDC2 /* PinnedLocation.swift in Sources */,
+				731573BF1D669C790037EDC2 /* AddressParser.swift in Sources */,
+				731573A71D669C1A0037EDC2 /* ISHHoverBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,12 +383,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = DHY5YM53QB;
 				INFOPLIST_FILE = MessagesExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.JKProductions.Pinnable.MessagesExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "MessagesExtension/MessagesExtension-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -348,12 +400,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = DHY5YM53QB;
 				INFOPLIST_FILE = MessagesExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.JKProductions.Pinnable.MessagesExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "MessagesExtension/MessagesExtension-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -363,10 +417,14 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = DHY5YM53QB;
 				INFOPLIST_FILE = Pinnable/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.JKProductions.Pinnable;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MessagesExtension/Pinnable-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -377,10 +435,13 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = DHY5YM53QB;
 				INFOPLIST_FILE = Pinnable/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.JKProductions.Pinnable;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MessagesExtension/Pinnable-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
