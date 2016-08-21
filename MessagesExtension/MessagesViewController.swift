@@ -18,8 +18,8 @@ class MessagesViewController: MSMessagesAppViewController {
     @IBOutlet weak var navItem: UINavigationItem!
     @IBOutlet weak var searchNavBar: UINavigationBar!
     var resultSearchController: UISearchController? = nil
-    var selectedPin: Pinnable? = nil
     
+    var selectedPin: Pinnable? = nil
     var locations: [PinnedLocation] = []
     var searchedPins: [SearchedLocation] = []
     
@@ -33,19 +33,14 @@ class MessagesViewController: MSMessagesAppViewController {
         
         map.delegate = self
         
-        // pin drop set up
-        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(addPin))
-        map.addGestureRecognizer(gesture)
-        
         // location manager setup
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         locationManager.distanceFilter = 10
         locationManager.delegate = self
-        
-        // map user location set up
         checkLocationAuthorizationStatus()
         
         // search bar setup
+        
         let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! LocationSearchTable
         resultSearchController = UISearchController(searchResultsController: locationSearchTable)
         resultSearchController?.searchResultsUpdater = locationSearchTable
@@ -53,21 +48,24 @@ class MessagesViewController: MSMessagesAppViewController {
         locationSearchTable.mapView = map
         locationSearchTable.handleMapSearchDelegate = self
         
+        
         let searchBar = resultSearchController!.searchBar
         searchBar.delegate = self
-        searchBar.sizeToFit()
         searchBar.placeholder = "Search for places to pin"
-        navItem.titleView = resultSearchController!.searchBar
-        navItem.titleView?.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
+        navItem.titleView = searchBar
+        searchBar.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
+        searchBar.sizeToFit()
         
-        
-        resultSearchController?.hidesNavigationBarDuringPresentation = false
+        resultSearchController?.hidesNavigationBarDuringPresentation = true
         resultSearchController?.dimsBackgroundDuringPresentation = false // make the map view still usable after the search button is pressed!
         definesPresentationContext = true
+        
+        // hover bars
         
         // current location hover bar
         let mapBarButton = MKUserTrackingBarButtonItem(mapView: map)
         self.currentLocationHoverBar.items = [mapBarButton]
+        // TODO - add send map button
         
         // save pins hover bar
         let savePinsButton = UIButton(type: .contactAdd)
@@ -75,6 +73,11 @@ class MessagesViewController: MSMessagesAppViewController {
         let savePinsBarButton = UIBarButtonItem(customView: savePinsButton)
         savePinsHoverBar.items = [savePinsBarButton]
         savePinsHoverBar.isHidden = true
+        
+        // pin drop set up
+        
+        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(addPin))
+        map.addGestureRecognizer(gesture)
         
     }
     
@@ -263,4 +266,12 @@ extension MessagesViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         clearMapOfSearches()
     }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard let locationSearchTable = resultSearchController?.searchResultsUpdater as? LocationSearchTable else { print("location table not present after search button pressed"); return }
+        locationSearchTable.tableView.tableHeaderView = searchNavBar
+        locationSearchTable.tableView.tableHeaderView?.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
+        searchBar.sizeToFit()
+        
+   }
 }

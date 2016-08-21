@@ -118,8 +118,8 @@
 			isa = PBXGroup;
 			children = (
 				731573921D669B100037EDC2 /* MessagesViewController.swift */,
-				731573B61D669C790037EDC2 /* VCMapView.swift */,
 				731573B71D669C790037EDC2 /* LocationSearchTable.swift */,
+				731573B61D669C790037EDC2 /* VCMapView.swift */,
 				731573B81D669C790037EDC2 /* PinnedLocation.swift */,
 				731573B91D669C790037EDC2 /* AddressParser.swift */,
 				731573BA1D669C790037EDC2 /* VCLocationManagement.swift */,
@@ -466,6 +466,7 @@
 				7315739E1D669B100037EDC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		731573A01D669B100037EDC2 /* Build configuration list for PBXNativeTarget "Pinnable" */ = {
 			isa = XCConfigurationList;
@@ -474,6 +475,7 @@
 				731573A21D669B100037EDC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -23,10 +23,13 @@
                             <view contentMode="scaleToFill" placeholderIntrinsicWidth="44" placeholderIntrinsicHeight="88" translatesAutoresizingMaskIntoConstraints="NO" id="H1j-c6-Bw1" customClass="ISHHoverBar">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="44" placeholderIntrinsicHeight="88" translatesAutoresizingMaskIntoConstraints="NO" id="319-8U-ba6" customClass="ISHHoverBar">
+                            <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" placeholderIntrinsicWidth="44" placeholderIntrinsicHeight="88" translatesAutoresizingMaskIntoConstraints="NO" id="319-8U-ba6" customClass="ISHHoverBar">
+                                <frame key="frameInset" minX="21" minY="153" width="44" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5iV-So-n4d">
+                            <navigationBar contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5iV-So-n4d">
+                                <frame key="frameInset" minY="74" width="375" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="TkI-76-lo2"/>
                                 </constraints>
@@ -37,21 +40,16 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="7Q4-ay-pdU" firstAttribute="leading" secondItem="JtI-wh-mPc" secondAttribute="leading" id="4Ld-5l-ODw"/>
-                            <constraint firstItem="319-8U-ba6" firstAttribute="top" secondItem="5iV-So-n4d" secondAttribute="bottom" constant="35" id="7tj-dD-Cmi"/>
-                            <constraint firstItem="319-8U-ba6" firstAttribute="top" secondItem="dVH-0A-85v" secondAttribute="bottom" constant="133" id="PWb-J8-taj"/>
+                            <constraint firstItem="7Q4-ay-pdU" firstAttribute="leading" secondItem="JtI-wh-mPc" secondAttribute="leading" id="1WO-nR-JOH"/>
+                            <constraint firstItem="7Q4-ay-pdU" firstAttribute="bottom" secondItem="F4J-Fh-SjH" secondAttribute="top" id="8Gb-g3-FX7"/>
+                            <constraint firstItem="7Q4-ay-pdU" firstAttribute="trailing" secondItem="5iV-So-n4d" secondAttribute="trailing" id="8eY-BY-2ED"/>
+                            <constraint firstItem="7Q4-ay-pdU" firstAttribute="top" secondItem="JtI-wh-mPc" secondAttribute="top" id="HTh-dK-zvq"/>
                             <constraint firstAttribute="trailingMargin" secondItem="H1j-c6-Bw1" secondAttribute="trailing" constant="15" id="Ra1-oc-emY"/>
-                            <constraint firstItem="319-8U-ba6" firstAttribute="leading" secondItem="JtI-wh-mPc" secondAttribute="leadingMargin" constant="5" id="Rji-n2-oB8"/>
-                            <constraint firstItem="7Q4-ay-pdU" firstAttribute="top" secondItem="JtI-wh-mPc" secondAttribute="top" id="Wid-8t-aFi"/>
-                            <constraint firstItem="7Q4-ay-pdU" firstAttribute="bottom" secondItem="F4J-Fh-SjH" secondAttribute="top" id="Wt1-pL-Gye"/>
-                            <constraint firstItem="5iV-So-n4d" firstAttribute="leading" secondItem="7Q4-ay-pdU" secondAttribute="leading" id="ZwR-7z-y9i"/>
-                            <constraint firstAttribute="bottom" secondItem="319-8U-ba6" secondAttribute="bottom" constant="470" id="kTa-jg-E2u"/>
+                            <constraint firstItem="7Q4-ay-pdU" firstAttribute="leading" secondItem="5iV-So-n4d" secondAttribute="leading" id="VcX-8z-n9a"/>
+                            <constraint firstAttribute="trailing" secondItem="7Q4-ay-pdU" secondAttribute="trailing" id="s3k-hF-kkN"/>
                             <constraint firstItem="F4J-Fh-SjH" firstAttribute="top" secondItem="H1j-c6-Bw1" secondAttribute="bottom" constant="23" id="uGO-Yv-A4M"/>
-                            <constraint firstAttribute="trailing" secondItem="7Q4-ay-pdU" secondAttribute="trailing" id="y7r-MO-TFl"/>
-                            <constraint firstItem="5iV-So-n4d" firstAttribute="trailing" secondItem="7Q4-ay-pdU" secondAttribute="trailing" id="yiy-4X-uIp"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="vs2-LD-vYj"/>
                     <connections>
                         <outlet property="currentLocationHoverBar" destination="H1j-c6-Bw1" id="WJc-yg-n9c"/>
                         <outlet property="map" destination="7Q4-ay-pdU" id="Pwu-vO-QuY"/>

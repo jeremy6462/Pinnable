@@ -28,6 +28,7 @@ extension LocationSearchTable : UISearchResultsUpdating {
         completor.queryFragment = searchBarText
         completor.region = mapView.region
         completor.delegate = self
+    
     }
     
 }
@@ -79,5 +80,7 @@ extension LocationSearchTable {
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         self.handleMapSearchDelegate?.didScroll()
     }
+    
+    
 
 }
