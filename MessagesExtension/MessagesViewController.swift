@@ -18,6 +18,7 @@ class MessagesViewController: MSMessagesAppViewController {
     @IBOutlet weak var navItem: UINavigationItem!
     @IBOutlet weak var searchNavBar: UINavigationBar!
     var resultSearchController: UISearchController? = nil
+    var locationSearchTable: LocationSearchTable? = nil
     
     var selectedPin: Pinnable? = nil
     var locations: [PinnedLocation] = []
@@ -41,12 +42,12 @@ class MessagesViewController: MSMessagesAppViewController {
         
         // search bar setup
         
-        let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! LocationSearchTable
+        locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as? LocationSearchTable
         resultSearchController = UISearchController(searchResultsController: locationSearchTable)
         resultSearchController?.searchResultsUpdater = locationSearchTable
         
-        locationSearchTable.mapView = map
-        locationSearchTable.handleMapSearchDelegate = self
+        locationSearchTable!.mapView = map
+        locationSearchTable!.handleMapSearchDelegate = self
         
         
         let searchBar = resultSearchController!.searchBar
@@ -55,6 +56,7 @@ class MessagesViewController: MSMessagesAppViewController {
         navItem.titleView = searchBar
         searchBar.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
         searchBar.sizeToFit()
+        print(searchNavBar.frame)
         
         resultSearchController?.hidesNavigationBarDuringPresentation = true
         resultSearchController?.dimsBackgroundDuringPresentation = false // make the map view still usable after the search button is pressed!
@@ -268,10 +270,11 @@ extension MessagesViewController: UISearchBarDelegate {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard let locationSearchTable = resultSearchController?.searchResultsUpdater as? LocationSearchTable else { print("location table not present after search button pressed"); return }
-        locationSearchTable.tableView.tableHeaderView = searchNavBar
-        locationSearchTable.tableView.tableHeaderView?.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
-        searchBar.sizeToFit()
-        
-   }
+        if (locationSearchTable!.tableView.tableHeaderView != navItem.titleView) {
+            locationSearchTable!.tableView.tableHeaderView = navItem.titleView
+            locationSearchTable!.tableView.tableHeaderView?.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
+            locationSearchTable!.tableView.contentInset = UIEdgeInsets(top: self.topLayoutGuide.length, left: 0, bottom: 60, right: 0)
+        }
+    }
+
 }
