@@ -15,9 +15,6 @@ class MessagesViewController: MSMessagesAppViewController {
     let regionRadius: CLLocationDistance = 1000
     var locationManager = CLLocationManager()
     
-    @IBOutlet weak var navItem: UINavigationItem!
-    @IBOutlet weak var searchNavBar: UINavigationBar!
-    var resultSearchController: UISearchController? = nil
     var locationSearchTable: LocationSearchTable? = nil
     
     var selectedPin: Pinnable? = nil
@@ -40,33 +37,17 @@ class MessagesViewController: MSMessagesAppViewController {
         locationManager.delegate = self
         checkLocationAuthorizationStatus()
         
-        // search bar setup
-        
-        locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as? LocationSearchTable
-        resultSearchController = UISearchController(searchResultsController: locationSearchTable)
-        resultSearchController?.searchResultsUpdater = locationSearchTable
-        
-        locationSearchTable!.mapView = map
-        locationSearchTable!.handleMapSearchDelegate = self
-        
-        
-        let searchBar = resultSearchController!.searchBar
-        searchBar.delegate = self
-        searchBar.placeholder = "Search for places to pin"
-        navItem.titleView = searchBar
-        searchBar.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
-        searchBar.sizeToFit()
-        print(searchNavBar.frame)
-        
-        resultSearchController?.hidesNavigationBarDuringPresentation = true
-        resultSearchController?.dimsBackgroundDuringPresentation = false // make the map view still usable after the search button is pressed!
         definesPresentationContext = true
         
         // hover bars
         
         // current location hover bar
         let mapBarButton = MKUserTrackingBarButtonItem(mapView: map)
-        self.currentLocationHoverBar.items = [mapBarButton]
+        
+        let searchButton = UIButton(type: .infoDark)
+        searchButton.addTarget(self, action: #selector(searchButtonPressed), for: .touchUpInside)
+        let searchBarButton = UIBarButtonItem(customView: searchButton)
+        self.currentLocationHoverBar.items = [mapBarButton, searchBarButton]
         // TODO - add send map button
         
         // save pins hover bar
@@ -121,6 +102,13 @@ class MessagesViewController: MSMessagesAppViewController {
         self.savePinsHoverBar.isHidden = true
     }
     
+    func searchButtonPressed() {
+        locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as? LocationSearchTable
+        locationSearchTable!.mapView = map
+        locationSearchTable!.mapSearchDelegate = self
+        self.present(locationSearchTable!, animated: true, completion: nil)
+    }
+    
     
     // MARK: - Conversation Handling
     
@@ -173,13 +161,14 @@ class MessagesViewController: MSMessagesAppViewController {
 }
 
 // MARK: - Handle what happens when a search result is tapped
-protocol HandleMapSearch {
+protocol MapSearchDelegate {
     func dropPin(for placemark:MKPlacemark, saveToLocations save: Bool)
     func dropPins(for placemarks:[MKPlacemark])
-    func didScroll()
+    func search()
+    func clear()
 }
 
-extension MessagesViewController: HandleMapSearch {
+extension MessagesViewController: MapSearchDelegate {
     
     func dropPin(for placemark:MKPlacemark, saveToLocations save: Bool = true) {
         
@@ -197,7 +186,6 @@ extension MessagesViewController: HandleMapSearch {
         annotation.placemark = placemark
         annotation.subtitle = AddressParser.parse(placemark: placemark)
         map.addAnnotation(annotation)
-        
     }
     
     func dropPins(for placemarks: [MKPlacemark]) {
@@ -224,23 +212,9 @@ extension MessagesViewController: HandleMapSearch {
         let region = MKCoordinateRegionMake(locationCenter, locationSpan)
         map.setRegion(region, animated: true)
     }
-    
-    func clearMapOfSearches() {
-        map.removeAnnotations(searchedPins)
-        searchedPins = []
-        savePinsHoverBar.isHidden = true
-    }
-    
-    func didScroll() {
-        self.resultSearchController?.searchBar.resignFirstResponder()
-    }
-}
 
-extension MessagesViewController: UISearchBarDelegate {
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        
-        guard let locationSearchTable = resultSearchController?.searchResultsUpdater as? LocationSearchTable else { print("location table not present after search button pressed"); return }
+    func search() {
+        guard let locationSearchTable = self.locationSearchTable else { print("location table not present after search button pressed"); return }
         
         // only drop pins for the addresses (don't include the suggested topics)
         let addresses = locationSearchTable.matchingItems.filter { return $0.subtitle != "" }
@@ -261,20 +235,19 @@ extension MessagesViewController: UISearchBarDelegate {
         locationSearchTable.dismiss(animated: true)
     }
     
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        clearMapOfSearches()
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        clearMapOfSearches()
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if (locationSearchTable!.tableView.tableHeaderView != navItem.titleView) {
-            locationSearchTable!.tableView.tableHeaderView = navItem.titleView
-            locationSearchTable!.tableView.tableHeaderView?.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor).isActive = true
-            locationSearchTable!.tableView.contentInset = UIEdgeInsets(top: self.topLayoutGuide.length, left: 0, bottom: 60, right: 0)
-        }
+    func clear() {
+        map.removeAnnotations(searchedPins)
+        searchedPins = []
+        savePinsHoverBar.isHidden = true
     }
 
 }
+
+extension MessagesViewController : ISHPullUpContentDelegate {
+    func pullUpViewController(_ pullUpViewController: ISHPullUpViewController, update edgeInsets: UIEdgeInsets, forContentViewController contentVC: UIViewController) {
+        // TODO
+        
+    }
+}
+
+
