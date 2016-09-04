@@ -106,6 +106,9 @@ class MessagesViewController: MSMessagesAppViewController {
         locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as? LocationSearchTable
         locationSearchTable!.mapView = map
         locationSearchTable!.mapSearchDelegate = self
+        
+        locationSearchTable!.modalPresentationStyle = .custom
+        locationSearchTable!.transitioningDelegate = self
         self.present(locationSearchTable!, animated: true, completion: nil)
     }
     
@@ -162,7 +165,7 @@ class MessagesViewController: MSMessagesAppViewController {
 
 // MARK: - Handle what happens when a search result is tapped
 protocol MapSearchDelegate {
-    func dropPin(for placemark:MKPlacemark, saveToLocations save: Bool)
+    func dropPin(for placemark:MKPlacemark, saveToLocations save: Bool, dismissPresentedVC dismiss: Bool)
     func dropPins(for placemarks:[MKPlacemark])
     func search()
     func clear()
@@ -170,7 +173,7 @@ protocol MapSearchDelegate {
 
 extension MessagesViewController: MapSearchDelegate {
     
-    func dropPin(for placemark:MKPlacemark, saveToLocations save: Bool = true) {
+    func dropPin(for placemark:MKPlacemark, saveToLocations save: Bool = true, dismissPresentedVC dismiss: Bool = false) {
         
         // if the pin is not present, add it
         var annotation: Pinnable
@@ -186,6 +189,10 @@ extension MessagesViewController: MapSearchDelegate {
         annotation.placemark = placemark
         annotation.subtitle = AddressParser.parse(placemark: placemark)
         map.addAnnotation(annotation)
+        
+        if dismiss {
+            self.dismiss(animated: true, completion: nil) // dismiss the presented location search table
+        }
     }
     
     func dropPins(for placemarks: [MKPlacemark]) {
@@ -194,6 +201,7 @@ extension MessagesViewController: MapSearchDelegate {
         }
         fitMapRegionForSearchedPins()
         savePinsHoverBar.isHidden = false
+        self.dismiss(animated: true, completion: nil) // dismiss the presented location search table
     }
     
     func fitMapRegionForSearchedPins() {
@@ -213,6 +221,7 @@ extension MessagesViewController: MapSearchDelegate {
         map.setRegion(region, animated: true)
     }
 
+    // TODO - refactor this to move the majority of the functionality to the location search table
     func search() {
         guard let locationSearchTable = self.locationSearchTable else { print("location table not present after search button pressed"); return }
         
@@ -243,10 +252,26 @@ extension MessagesViewController: MapSearchDelegate {
 
 }
 
-extension MessagesViewController : ISHPullUpContentDelegate {
-    func pullUpViewController(_ pullUpViewController: ISHPullUpViewController, update edgeInsets: UIEdgeInsets, forContentViewController contentVC: UIViewController) {
-        // TODO
-        
+extension MessagesViewController: UIViewControllerTransitioningDelegate {
+    
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        let vc = PresentationController(presentedViewController: presented, presenting: presenting)
+        // I really don't want to hardcode the value of topLayoutGuideLength here, but when the extension is in compact mode, topLayoutGuide.length returns 172.0.
+        vc.topLayoutGuideLength = topLayoutGuide.length > 100 ? 86.0 : topLayoutGuide.length
+        return vc
+    }
+}
+
+
+class PresentationController: UIPresentationController {
+    
+    var topLayoutGuideLength: CGFloat = 0.0
+    
+    override var frameOfPresentedViewInContainerView: CGRect {
+        guard let containerView = containerView else {
+            return super.frameOfPresentedViewInContainerView
+        }
+        return CGRect(x: 0, y: topLayoutGuideLength, width: containerView.bounds.width, height: containerView.bounds.height - topLayoutGuideLength)
     }
 }
 

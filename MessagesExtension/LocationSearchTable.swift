@@ -19,15 +19,9 @@ class LocationSearchTable : UITableViewController {
     var mapView: MKMapView? = nil
     
     var mapSearchDelegate:MapSearchDelegate? = nil
-
-    weak var pullUpController: ISHPullUpViewController!
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
     
     override func viewDidLoad() {
-        resultSearchController = UISearchController(searchResultsController: self)
+        resultSearchController = UISearchController(searchResultsController: nil)
         resultSearchController?.searchResultsUpdater = self
         
         let searchBar = resultSearchController!.searchBar
@@ -40,37 +34,6 @@ class LocationSearchTable : UITableViewController {
         resultSearchController?.dimsBackgroundDuringPresentation = false // make the map view still usable after the search button is pressed!
     }
 
-}
-
-extension LocationSearchTable: ISHPullUpSizingDelegate, ISHPullUpStateDelegate {
-    
-    // Sizing
-    
-    func pullUpViewController(_ pullUpViewController: ISHPullUpViewController, minimumHeightForBottomViewController bottomVC: UIViewController) -> CGFloat {
-        print("bottom layout guide =  \(self.bottomLayoutGuide)")
-        return 100
-    }
-    
-    func pullUpViewController(_ pullUpViewController: ISHPullUpViewController, maximumHeightForBottomViewController bottomVC: UIViewController, maximumAvailableHeight: CGFloat) -> CGFloat {
-        print("Top = \(UIScreen.main.bounds.height)")
-        return UIScreen.main.bounds.height - 100
-    }
-    
-    func pullUpViewController(_ pullUpViewController: ISHPullUpViewController, targetHeightForBottomViewController bottomVC: UIViewController, fromCurrentHeight height: CGFloat) -> CGFloat {
-        return UIScreen.main.bounds.height / 3
-    }
-    
-    func pullUpViewController(_ pullUpViewController: ISHPullUpViewController, update edgeInsets: UIEdgeInsets, forBottomViewController contentVC: UIViewController) {
-        tableView.contentInset = edgeInsets
-    }
-    
-    // State
-    
-    func pullUpViewController(_ pullUpViewController: ISHPullUpViewController, didChangeTo state: ISHPullUpState) {
-        // TODO - draw the handle view
-        
-    }
-    
 }
 
 extension LocationSearchTable : UISearchResultsUpdating {
@@ -102,14 +65,17 @@ extension LocationSearchTable: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.mapSearchDelegate?.search()
+        self.dismiss(animated: true, completion: nil)
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         self.mapSearchDelegate?.clear()
+        self.dismiss(animated: true, completion: nil)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.mapSearchDelegate?.clear()
+        self.dismiss(animated: true, completion: nil)
     }
     
 }
@@ -141,11 +107,10 @@ extension LocationSearchTable {
                 self.mapSearchDelegate?.dropPins(for: items.map { return $0.placemark } ) // convert the MKMapItems to MKPlacemarks
             } else { // this is an address
                 if let placemark = response?.mapItems[0].placemark {
-                    self.mapSearchDelegate?.dropPin(for: placemark, saveToLocations: true)
+                    self.mapSearchDelegate?.dropPin(for: placemark, saveToLocations: true, dismissPresentedVC: true)
                 }
             }
         }
-        dismiss(animated: true, completion: nil)
     }
     
     override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {

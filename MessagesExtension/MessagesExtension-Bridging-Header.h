@@ -3,6 +3,3 @@
 //
 
 #import "ISHHoverBar.h"
-#import "ISHPullUpViewController.h"
-#import "ISHPullUpRoundedView.h"
-#import "ISHPullUpHandleView.h"
