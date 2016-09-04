@@ -196,12 +196,12 @@ extension MessagesViewController: MapSearchDelegate {
     }
     
     func dropPins(for placemarks: [MKPlacemark]) {
+        self.dismiss(animated: true, completion: nil) // dismiss the presented location search table
         for placemark in placemarks {
             self.dropPin(for: placemark, saveToLocations: false)
         }
         fitMapRegionForSearchedPins()
         savePinsHoverBar.isHidden = false
-        self.dismiss(animated: true, completion: nil) // dismiss the presented location search table
     }
     
     func fitMapRegionForSearchedPins() {
@@ -241,7 +241,7 @@ extension MessagesViewController: MapSearchDelegate {
         }
         
         self.savePinsHoverBar.isHidden = false
-        locationSearchTable.dismiss(animated: true)
+        self.dismiss(animated: true)
     }
     
     func clear() {
