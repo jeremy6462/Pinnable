@@ -19,26 +19,26 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="7Q4-ay-pdU">
-                                <frame key="frameInset" width="1000" height="1000"/>
-                            </mapView>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="7Q4-ay-pdU"/>
                             <view contentMode="scaleToFill" placeholderIntrinsicWidth="44" placeholderIntrinsicHeight="88" translatesAutoresizingMaskIntoConstraints="NO" id="H1j-c6-Bw1" customClass="ISHHoverBar">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" placeholderIntrinsicWidth="44" placeholderIntrinsicHeight="88" translatesAutoresizingMaskIntoConstraints="NO" id="319-8U-ba6" customClass="ISHHoverBar">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="IQw-hO-Fbd"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="319-8U-ba6" firstAttribute="top" secondItem="dVH-0A-85v" secondAttribute="bottom" constant="44" id="1Cv-qp-k8q"/>
                             <constraint firstAttribute="trailing" secondItem="7Q4-ay-pdU" secondAttribute="trailing" id="472-GN-TUZ"/>
-                            <constraint firstItem="319-8U-ba6" firstAttribute="leading" secondItem="JtI-wh-mPc" secondAttribute="leadingMargin" constant="5" id="Mll-mh-Bpj"/>
                             <constraint firstAttribute="trailingMargin" secondItem="H1j-c6-Bw1" secondAttribute="trailing" constant="15" id="QUk-Cb-Q6j"/>
-                            <constraint firstItem="319-8U-ba6" firstAttribute="top" secondItem="dVH-0A-85v" secondAttribute="bottom" constant="133" id="WLs-Yd-pwn"/>
                             <constraint firstItem="F4J-Fh-SjH" firstAttribute="top" secondItem="H1j-c6-Bw1" secondAttribute="bottom" constant="23" id="XgP-Bd-ELw"/>
                             <constraint firstItem="7Q4-ay-pdU" firstAttribute="top" secondItem="JtI-wh-mPc" secondAttribute="top" id="lRC-mz-Ohd"/>
+                            <constraint firstItem="7Q4-ay-pdU" firstAttribute="leading" secondItem="319-8U-ba6" secondAttribute="trailing" constant="-60" id="q4N-72-zCY"/>
                             <constraint firstItem="7Q4-ay-pdU" firstAttribute="leading" secondItem="JtI-wh-mPc" secondAttribute="leading" id="tb8-dv-FDJ"/>
-                            <constraint firstItem="F4J-Fh-SjH" firstAttribute="top" secondItem="319-8U-ba6" secondAttribute="bottom" constant="470" id="uBm-9V-tOq"/>
                             <constraint firstItem="7Q4-ay-pdU" firstAttribute="bottom" secondItem="F4J-Fh-SjH" secondAttribute="top" id="xMQ-Sz-lcK"/>
                         </constraints>
                     </view>

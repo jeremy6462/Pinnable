@@ -24,6 +24,8 @@ class MessagesViewController: MSMessagesAppViewController {
     @IBOutlet weak var currentLocationHoverBar: ISHHoverBar!
     @IBOutlet weak var savePinsHoverBar: ISHHoverBar!
     
+    var instructions: UIView?
+    
     @IBOutlet weak var map: MKMapView!
     
     override func viewDidLoad() {
@@ -44,7 +46,11 @@ class MessagesViewController: MSMessagesAppViewController {
         // current location hover bar
         let mapBarButton = MKUserTrackingBarButtonItem(mapView: map)
         
-        let searchButton = UIButton(type: .infoDark)
+        let searchButtonSize = CGSize(width: 30, height: 30)
+        let searchButton = UIButton(frame: CGRect(origin: CGPoint(), size: searchButtonSize))
+        searchButton.setImage(UIImage(named: "search")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        searchButton.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 10, 10);
+        searchButton.tintColor = .blue
         searchButton.addTarget(self, action: #selector(searchButtonPressed), for: .touchUpInside)
         let searchBarButton = UIBarButtonItem(customView: searchButton)
         self.currentLocationHoverBar.items = [mapBarButton, searchBarButton]
@@ -61,7 +67,36 @@ class MessagesViewController: MSMessagesAppViewController {
         
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(addPin))
         map.addGestureRecognizer(gesture)
-        
+    }
+    
+    func handle(presentationStyle: MSMessagesAppPresentationStyle) {
+        switch presentationStyle {
+        case .compact:
+            compactInstructions(hide: false)
+        case .expanded:
+            compactInstructions(hide: true)
+        }
+    }
+    
+    func compactInstructions(hide: Bool = true) {
+        if instructions == nil {
+            instructions = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+            instructions!.frame = self.view.bounds
+            instructions!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            let label = UILabel()
+            label.text = "Tap the up arrow in \n the bottom right to start"
+            label.layer.borderColor = UIColor.gray.cgColor
+            label.layer.borderWidth = 2
+            label.layer.cornerRadius = 20
+            instructions!.addSubview(label)
+            // TODO - center label between the top and bottom layout guides (currently off screen... whoops)
+        }
+        if hide {
+            instructions!.removeFromSuperview()
+            instructions = nil
+        } else {
+            self.view.addSubview(instructions!)
+        }
     }
     
     func addPin(gestureRecognizer:UIGestureRecognizer){
@@ -120,6 +155,7 @@ class MessagesViewController: MSMessagesAppViewController {
         // This will happen when the extension is about to present UI.
         
         // Use this method to configure the extension and restore previously stored state.
+        handle(presentationStyle: self.presentationStyle)
     }
     
     override func didResignActive(with conversation: MSConversation) {
@@ -153,6 +189,8 @@ class MessagesViewController: MSMessagesAppViewController {
         // Called before the extension transitions to a new presentation style.
     
         // Use this method to prepare for the change in presentation style.
+        
+        handle(presentationStyle: presentationStyle)
     }
     
     override func didTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
