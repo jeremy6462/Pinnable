@@ -19,7 +19,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="7Q4-ay-pdU"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="7Q4-ay-pdU">
+                                <frame key="frameInset" width="1000" height="1000"/>
+                            </mapView>
                             <view contentMode="scaleToFill" placeholderIntrinsicWidth="44" placeholderIntrinsicHeight="88" translatesAutoresizingMaskIntoConstraints="NO" id="H1j-c6-Bw1" customClass="ISHHoverBar">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
@@ -124,5 +126,45 @@
             </objects>
             <point key="canvasLocation" x="2601" y="139"/>
         </scene>
+        <!--Compact Instructions View Controller-->
+        <scene sceneID="2yn-fl-tbc">
+            <objects>
+                <viewController storyboardIdentifier="CompactInstructionsViewController" id="9aV-tC-PPW" customClass="CompactInstructionsViewController" customModule="MessagesExtension" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="X95-N4-o8u"/>
+                        <viewControllerLayoutGuide type="bottom" id="dAU-hc-4DX"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="qdd-Ri-1PU">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="blurredMap" translatesAutoresizingMaskIntoConstraints="NO" id="Heh-hd-3sd"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.62" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap the up arrow in the bottom right to start" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Qb-6v-DTG">
+                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Heh-hd-3sd" firstAttribute="leading" secondItem="qdd-Ri-1PU" secondAttribute="leading" id="0s2-xy-PF7"/>
+                            <constraint firstItem="Heh-hd-3sd" firstAttribute="bottom" secondItem="dAU-hc-4DX" secondAttribute="top" id="Hwb-Zl-oPX"/>
+                            <constraint firstItem="6Qb-6v-DTG" firstAttribute="top" secondItem="X95-N4-o8u" secondAttribute="bottom" constant="58" id="KFJ-F5-eCS"/>
+                            <constraint firstAttribute="trailing" secondItem="Heh-hd-3sd" secondAttribute="trailing" id="MfL-ti-7pO"/>
+                            <constraint firstItem="Heh-hd-3sd" firstAttribute="top" secondItem="qdd-Ri-1PU" secondAttribute="top" id="Z0X-Nv-0tS"/>
+                            <constraint firstItem="6Qb-6v-DTG" firstAttribute="centerX" secondItem="Heh-hd-3sd" secondAttribute="centerX" id="aaz-Cq-sbA"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="instructions" destination="6Qb-6v-DTG" id="pbi-8S-eXl"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2lb-Qc-26n" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1724" y="843.32833583208401"/>
+        </scene>
     </scenes>
+    <resources>
+        <image name="blurredMap" width="284" height="199"/>
+    </resources>
 </document>

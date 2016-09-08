@@ -72,16 +72,16 @@ class MessagesViewController: MSMessagesAppViewController {
     func handle(presentationStyle: MSMessagesAppPresentationStyle) {
         switch presentationStyle {
         case .compact:
-            compactInstructions(hide: false)
+            let instructions = storyboard!.instantiateViewController(withIdentifier: "CompactInstructionsViewController") as? CompactInstructionsViewController
+            self.present(instructions!, animated: true, completion: nil)
         case .expanded:
-            compactInstructions(hide: true)
+            self.dismiss()
         }
     }
     
     func compactInstructions(hide: Bool = true) {
         if instructions == nil {
             instructions = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-            instructions!.frame = self.view.bounds
             instructions!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             let label = UILabel()
             label.text = "Tap the up arrow in \n the bottom right to start"
@@ -89,7 +89,10 @@ class MessagesViewController: MSMessagesAppViewController {
             label.layer.borderWidth = 2
             label.layer.cornerRadius = 20
             instructions!.addSubview(label)
+            instructions?.layer.borderWidth = 3
+            instructions?.layer.borderColor = UIColor.gray.cgColor
             // TODO - center label between the top and bottom layout guides (currently off screen... whoops)
+            
         }
         if hide {
             instructions!.removeFromSuperview()
