@@ -24,6 +24,8 @@ class LocationSearchTable : UITableViewController {
         resultSearchController = UISearchController(searchResultsController: nil)
         resultSearchController?.searchResultsUpdater = self
         
+        self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 40, right: 0)
+        
         let searchBar = resultSearchController!.searchBar
         searchBar.delegate = self
         searchBar.placeholder = "Search for places to pin"
@@ -33,7 +35,7 @@ class LocationSearchTable : UITableViewController {
         resultSearchController?.hidesNavigationBarDuringPresentation = true
         resultSearchController?.dimsBackgroundDuringPresentation = false // make the map view still usable after the search button is pressed!
     }
-
+    
 }
 
 extension LocationSearchTable : UISearchResultsUpdating {
@@ -61,7 +63,7 @@ extension LocationSearchTable: MKLocalSearchCompleterDelegate {
     }
 }
 
-extension LocationSearchTable: UISearchBarDelegate {
+extension LocationSearchTable: UISearchBarDelegate, UISearchControllerDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.mapSearchDelegate?.search()
@@ -113,8 +115,4 @@ extension LocationSearchTable {
         }
     }
     
-    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        self.resultSearchController?.searchBar.resignFirstResponder()
-    }
-
 }

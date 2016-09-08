@@ -16,6 +16,7 @@ class MessagesViewController: MSMessagesAppViewController {
     var locationManager = CLLocationManager()
     
     var locationSearchTable: LocationSearchTable? = nil
+    var instructions: CompactInstructionsViewController? = nil
     
     var selectedPin: Pinnable? = nil
     var locations: [PinnedLocation] = []
@@ -23,8 +24,6 @@ class MessagesViewController: MSMessagesAppViewController {
     
     @IBOutlet weak var currentLocationHoverBar: ISHHoverBar!
     @IBOutlet weak var savePinsHoverBar: ISHHoverBar!
-    
-    var instructions: UIView?
     
     @IBOutlet weak var map: MKMapView!
     
@@ -67,38 +66,16 @@ class MessagesViewController: MSMessagesAppViewController {
         
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(addPin))
         map.addGestureRecognizer(gesture)
+        
+        instructions = storyboard!.instantiateViewController(withIdentifier: "CompactInstructionsViewController") as? CompactInstructionsViewController
     }
     
     func handle(presentationStyle: MSMessagesAppPresentationStyle) {
         switch presentationStyle {
         case .compact:
-            let instructions = storyboard!.instantiateViewController(withIdentifier: "CompactInstructionsViewController") as? CompactInstructionsViewController
-            self.present(instructions!, animated: true, completion: nil)
+            self.present(instructions!, animated: false, completion: nil)
         case .expanded:
-            self.dismiss()
-        }
-    }
-    
-    func compactInstructions(hide: Bool = true) {
-        if instructions == nil {
-            instructions = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-            instructions!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            let label = UILabel()
-            label.text = "Tap the up arrow in \n the bottom right to start"
-            label.layer.borderColor = UIColor.gray.cgColor
-            label.layer.borderWidth = 2
-            label.layer.cornerRadius = 20
-            instructions!.addSubview(label)
-            instructions?.layer.borderWidth = 3
-            instructions?.layer.borderColor = UIColor.gray.cgColor
-            // TODO - center label between the top and bottom layout guides (currently off screen... whoops)
-            
-        }
-        if hide {
-            instructions!.removeFromSuperview()
-            instructions = nil
-        } else {
-            self.view.addSubview(instructions!)
+            self.dismiss(animated: false, completion: nil)
         }
     }
     

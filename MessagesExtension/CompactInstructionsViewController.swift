@@ -10,16 +10,21 @@ import UIKit
 
 class CompactInstructionsViewController : UIViewController {
     
-    @IBOutlet weak var instructions: UILabel!
+    @IBOutlet weak var instructions: InstructionsLabel!
     
     override func viewDidLoad() {
         instructions.layer.borderColor = UIColor.gray.cgColor
         instructions.layer.borderWidth = 2
         instructions.layer.cornerRadius = 5
         instructions.backgroundColor = UIColor.white
-        instructions.text = "Tap the up arrow in the \n bottom right to start"
-        
-        
+        instructions.text = "Tap the up arrow in the \n bottom right to add pins"
     }
     
+}
+
+class InstructionsLabel : UILabel {
+    override func drawText(in rect: CGRect) {
+        let insets = UIEdgeInsets(top: 5, left: 3, bottom: 5, right: 3)
+        super.drawText(in: UIEdgeInsetsInsetRect(rect, insets))
+    }
 }
