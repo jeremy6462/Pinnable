@@ -48,7 +48,6 @@ extension LocationSearchTable : UISearchResultsUpdating {
         completor.queryFragment = searchBarText
         completor.region = mapView.region
         completor.delegate = self
-    
     }
     
 }

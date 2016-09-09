@@ -95,6 +95,13 @@ extension MessagesViewController: MKMapViewDelegate {
             let pinToSave = PinnedLocation(title: selectedPin.title!, subtitle: selectedPin.subtitle!, coordinate: selectedPin.coordinate)
             locations.append(pinToSave)
             self.map.addAnnotation(pinToSave)
+            if !(searchHoverBar.items?.contains(removePinsButton!))! {
+                if (searchHoverBar.items?.contains(savePinsButton!))! {
+                    searchHoverBar.items = [searchButton!, savePinsButton!, removePinsButton!]
+                } else {
+                    searchHoverBar.items = [searchButton!, removePinsButton!]
+                }
+            }
         }
     }
     
@@ -102,6 +109,13 @@ extension MessagesViewController: MKMapViewDelegate {
         if let selectedPin = selectedPin {
             self.map.removeAnnotation(selectedPin)
             locations = locations.filter() { $0.placemark != selectedPin.placemark }
+            if !(searchHoverBar.items?.contains(removePinsButton!))! {
+                if (searchHoverBar.items?.contains(savePinsButton!))! {
+                    searchHoverBar.items = [searchButton!, savePinsButton!, removePinsButton!]
+                } else {
+                    searchHoverBar.items = [searchButton!, removePinsButton!]
+                }
+            }
         }
     }
 

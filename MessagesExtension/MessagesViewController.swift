@@ -19,11 +19,21 @@ class MessagesViewController: MSMessagesAppViewController {
     var instructions: CompactInstructionsViewController? = nil
     
     var selectedPin: Pinnable? = nil
-    var locations: [PinnedLocation] = []
+    var locations: [PinnedLocation]  = [] {
+        didSet {
+            if locations.isEmpty {
+                searchHoverBar.items = [searchButton!]
+            }
+        }
+    }
     var searchedPins: [SearchedLocation] = []
     
     @IBOutlet weak var currentLocationHoverBar: ISHHoverBar!
-    @IBOutlet weak var savePinsHoverBar: ISHHoverBar!
+    @IBOutlet weak var searchHoverBar: ISHHoverBar!
+    var searchButton: UIBarButtonItem? = nil
+    var savePinsButton: UIBarButtonItem? = nil
+    var removePinsButton: UIBarButtonItem? = nil
+    
     
     @IBOutlet weak var map: MKMapView!
     
@@ -41,26 +51,14 @@ class MessagesViewController: MSMessagesAppViewController {
         definesPresentationContext = true
         
         // hover bars
-        
-        // current location hover bar
         let mapBarButton = MKUserTrackingBarButtonItem(mapView: map)
+        let sendButton = hoverBarButton(imageName: "send", selector: #selector(sendLocations))
+        self.currentLocationHoverBar.items = [mapBarButton, sendButton]
         
-        let searchButtonSize = CGSize(width: 30, height: 30)
-        let searchButton = UIButton(frame: CGRect(origin: CGPoint(), size: searchButtonSize))
-        searchButton.setImage(UIImage(named: "search")?.withRenderingMode(.alwaysOriginal), for: .normal)
-        searchButton.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 10, 10);
-        searchButton.tintColor = .blue
-        searchButton.addTarget(self, action: #selector(searchButtonPressed), for: .touchUpInside)
-        let searchBarButton = UIBarButtonItem(customView: searchButton)
-        self.currentLocationHoverBar.items = [mapBarButton, searchBarButton]
-        // TODO - add send map button
-        
-        // save pins hover bar
-        let savePinsButton = UIButton(type: .contactAdd)
-        savePinsButton.addTarget(self, action: #selector(savePins), for: .touchUpInside)
-        let savePinsBarButton = UIBarButtonItem(customView: savePinsButton)
-        savePinsHoverBar.items = [savePinsBarButton]
-        savePinsHoverBar.isHidden = true
+        searchButton = hoverBarButton(imageName: "search", selector: #selector(searchButtonPressed))
+        savePinsButton = hoverBarButton(imageName: "addLocation", selector: #selector(savePins))
+        removePinsButton = hoverBarButton(imageName: "removeLocation", selector: #selector(removeSavedPins))
+        searchHoverBar.items = [searchButton!]
         
         // pin drop set up
         
@@ -104,6 +102,7 @@ class MessagesViewController: MSMessagesAppViewController {
                 }
             })
         }
+        searchHoverBar.items = [searchButton!, removePinsButton!]
     }
     
     func savePins() {
@@ -114,7 +113,32 @@ class MessagesViewController: MSMessagesAppViewController {
             self.locations.append(pin)
         }
         searchedPins.removeAll()
-        self.savePinsHoverBar.isHidden = true
+        searchHoverBar.items = [searchButton!, removePinsButton!]
+    }
+    
+    // TODO - add remove pins button
+    func removeSavedPins() {
+        locations = []
+        self.map.removeAnnotations(self.map.annotations)
+        searchHoverBar.items = [searchButton!]
+    }
+    
+    func sendLocations() {
+        var components = URLComponents()
+        let items = locations.flatMap { $0.queryItems }
+        components.queryItems = items
+        let message = MSMessage(session: MSSession())
+        message.url = components.url!
+        // TODO - layout
+        
+        guard let conversation = activeConversation else { fatalError("Expected a conversation") }
+        conversation.insert(message) { error in
+            if let error = error {
+                print(error)
+            }
+        }
+        requestPresentationStyle(.compact)
+//        handle(presentationStyle: .compact)
     }
     
     func searchButtonPressed() {
@@ -127,43 +151,55 @@ class MessagesViewController: MSMessagesAppViewController {
         self.present(locationSearchTable!, animated: true, completion: nil)
     }
     
+    func hoverBarButton(imageName: String, selector: Selector) -> UIBarButtonItem {
+        let button = UIButton(frame: CGRect(origin: CGPoint(), size: CGSize(width: 30, height: 30)))
+        button.setImage(UIImage(named: imageName)?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
+        button.tintColor = .blue
+        button.addTarget(self, action: selector, for: .touchUpInside)
+        return UIBarButtonItem(customView: button)
+    }
+    
     
     // MARK: - Conversation Handling
     
+    // conversation.selectedMessage != nil when tapping on a message
     override func willBecomeActive(with conversation: MSConversation) {
         // Called when the extension is about to move from the inactive to active state.
         // This will happen when the extension is about to present UI.
         
         // Use this method to configure the extension and restore previously stored state.
-        handle(presentationStyle: self.presentationStyle)
-    }
-    
-    override func didResignActive(with conversation: MSConversation) {
-        // Called when the extension is about to move from the active to inactive state.
-        // This will happen when the user dissmises the extension, changes to a different
-        // conversation or quits Messages.
-        
-        // Use this method to release shared resources, save user data, invalidate timers,
-        // and store enough state information to restore your extension to its current state
-        // in case it is terminated later.
+        if let message = conversation.selectedMessage {
+            handle(received: message)
+        } else {
+           handle(presentationStyle: self.presentationStyle)
+        }
     }
    
-    override func didReceive(_ message: MSMessage, conversation: MSConversation) {
-        // Called when a message arrives that was generated by another instance of this
-        // extension on a remote device.
-        
-        // Use this method to trigger UI updates in response to the message.
+    // only when the application is running
+    override func didSelect(_ message: MSMessage, conversation: MSConversation) {
+        self.handle(received: message)
     }
     
-    override func didStartSending(_ message: MSMessage, conversation: MSConversation) {
-        // Called when the user taps the send button.
+    func handle(received message: MSMessage) {
+        let url = message.url
+        guard let urlComponents = NSURLComponents(url: url!, resolvingAgainstBaseURL: false),
+            let queryItems = urlComponents.queryItems, queryItems.count % 2 == 0 else { return }
+        var coordinates: [[URLQueryItem]] = []
+        for i in 0..<queryItems.count {
+            if (i % 2 == 0) {
+                let pair = [queryItems[i], queryItems[i+1]]
+                coordinates.append(pair)
+            } else {
+                continue
+            }
+        }
+        map.removeAnnotations(map.annotations) // FIXME - this will delete user data if user has pins already on the map
+        locations = coordinates.map{ PinnedLocation(queryItems: $0)! }
+        map.addAnnotations(locations)
+        searchHoverBar.items = [searchButton!, removePinsButton!]
     }
     
-    override func didCancelSending(_ message: MSMessage, conversation: MSConversation) {
-        // Called when the user deletes the message without sending it.
-    
-        // Use this to clean up state related to the deleted message.
-    }
     
     override func willTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
         // Called before the extension transitions to a new presentation style.
@@ -173,11 +209,6 @@ class MessagesViewController: MSMessagesAppViewController {
         handle(presentationStyle: presentationStyle)
     }
     
-    override func didTransition(to presentationStyle: MSMessagesAppPresentationStyle) {
-        // Called after the extension transitions to a new presentation style.
-    
-        // Use this method to finalize any behaviors associated with the change in presentation style.
-    }
 
 }
 
@@ -199,9 +230,11 @@ extension MessagesViewController: MapSearchDelegate {
             annotation = PinnedLocation(title: placemark.name, coordinate: placemark.coordinate)
             locations.append(annotation as! PinnedLocation)
             centerMapOnLocation(location: placemark.location!)
+            searchHoverBar.items = [searchButton!, removePinsButton!]
         } else {
             annotation = SearchedLocation(title: placemark.name, coordinate: placemark.coordinate)
             searchedPins.append(annotation as! SearchedLocation)
+            searchHoverBar.items = [searchButton!, savePinsButton!]
         }
         
         annotation.placemark = placemark
@@ -219,7 +252,6 @@ extension MessagesViewController: MapSearchDelegate {
             self.dropPin(for: placemark, saveToLocations: false)
         }
         fitMapRegionForSearchedPins()
-        savePinsHoverBar.isHidden = false
     }
     
     func fitMapRegionForSearchedPins() {
@@ -258,14 +290,18 @@ extension MessagesViewController: MapSearchDelegate {
             }
         }
         
-        self.savePinsHoverBar.isHidden = false
         self.dismiss(animated: true)
+        searchHoverBar.items = [searchButton!, savePinsButton!]
     }
     
     func clear() {
         map.removeAnnotations(searchedPins)
         searchedPins = []
-        savePinsHoverBar.isHidden = true
+        if locations.isEmpty {
+            searchHoverBar.items = [searchButton!]
+        } else {
+            searchHoverBar.items = [searchButton!, savePinsButton!]
+        }
     }
 
 }
@@ -293,4 +329,6 @@ class PresentationController: UIPresentationController {
     }
 }
 
+// TODO - handle state changes of adding, dropping with hover bar buttons using enums
+// when searching, add a pin, then hit remove all, the add searched pins button disapears
 

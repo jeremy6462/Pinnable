@@ -20,6 +20,7 @@
 		731573BF1D669C790037EDC2 /* AddressParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B91D669C790037EDC2 /* AddressParser.swift */; };
 		731573C01D669C790037EDC2 /* VCLocationManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573BA1D669C790037EDC2 /* VCLocationManagement.swift */; };
 		73A826111D81E99C002E1FDF /* CompactInstructionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A826101D81E99C002E1FDF /* CompactInstructionsViewController.swift */; };
+		73A826131D8212C7002E1FDF /* QueryItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A826121D8212C7002E1FDF /* QueryItems.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,7 @@
 		731573B91D669C790037EDC2 /* AddressParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressParser.swift; sourceTree = "<group>"; };
 		731573BA1D669C790037EDC2 /* VCLocationManagement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VCLocationManagement.swift; sourceTree = "<group>"; };
 		73A826101D81E99C002E1FDF /* CompactInstructionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompactInstructionsViewController.swift; sourceTree = "<group>"; };
+		73A826121D8212C7002E1FDF /* QueryItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryItems.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +126,7 @@
 				731573B71D669C790037EDC2 /* LocationSearchTable.swift */,
 				731573B61D669C790037EDC2 /* VCMapView.swift */,
 				731573B81D669C790037EDC2 /* PinnedLocation.swift */,
+				73A826121D8212C7002E1FDF /* QueryItems.swift */,
 				731573B91D669C790037EDC2 /* AddressParser.swift */,
 				731573BA1D669C790037EDC2 /* VCLocationManagement.swift */,
 				731573941D669B100037EDC2 /* MainInterface.storyboard */,
@@ -263,6 +266,7 @@
 				731573BD1D669C790037EDC2 /* LocationSearchTable.swift in Sources */,
 				731573931D669B100037EDC2 /* MessagesViewController.swift in Sources */,
 				731573C01D669C790037EDC2 /* VCLocationManagement.swift in Sources */,
+				73A826131D8212C7002E1FDF /* QueryItems.swift in Sources */,
 				731573BE1D669C790037EDC2 /* PinnedLocation.swift in Sources */,
 				73A826111D81E99C002E1FDF /* CompactInstructionsViewController.swift in Sources */,
 				731573BF1D669C790037EDC2 /* AddressParser.swift in Sources */,
