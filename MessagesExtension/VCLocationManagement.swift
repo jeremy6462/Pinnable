@@ -43,13 +43,11 @@ extension MessagesViewController: CLLocationManagerDelegate {
     }
     
     func allowLocationTracking() {
-        self.currentLocationHoverBar.isHidden = false
         map.showsUserLocation = true
-        map.setCenter(map.userLocation.coordinate, animated: true)
+        centerMapOnLocation(location: map.userLocation.location!)
     }
     
     func doesntAllowLocationTracking() {
-        self.currentLocationHoverBar.isHidden = true
         map.showsUserLocation = false
     }
     

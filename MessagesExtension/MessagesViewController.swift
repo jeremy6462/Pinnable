@@ -295,12 +295,24 @@ extension MessagesViewController {
     }
     
     func sendLocations() {
+        
+        let message = MSMessage(session: MSSession())
+        
         var components = URLComponents()
         let items = locations.flatMap { $0.queryItems }
         components.queryItems = items
-        let message = MSMessage(session: MSSession())
         message.url = components.url!
-        // TODO - layout
+        
+        let square = CGSize(width: self.view.frame.width, height: self.view.frame.width)
+        UIGraphicsBeginImageContextWithOptions(square, false, UIScreen.main.scale)
+        self.map.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        let layout = MSMessageTemplateLayout()
+        layout.caption = "Pinnable Map"
+        layout.image = image
+        message.layout = layout
         
         guard let conversation = activeConversation else { fatalError("Expected a conversation") }
         conversation.insert(message) { error in
