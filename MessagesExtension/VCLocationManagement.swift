@@ -32,7 +32,10 @@ extension MessagesViewController: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        centerMapOnLocation(location: locations.last!)
+        if let location = locations.last {
+            centerMapOnLocation(location: location)
+            save(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        }
     }
     
     // MARK - Utilities
@@ -44,11 +47,21 @@ extension MessagesViewController: CLLocationManagerDelegate {
     
     func allowLocationTracking() {
         map.showsUserLocation = true
-        centerMapOnLocation(location: map.userLocation.location!)
+        allowsLocationTracking = true
     }
     
     func doesntAllowLocationTracking() {
         map.showsUserLocation = false
+        allowsLocationTracking = false
+    }
+    
+    func handle(userLocationAllowed allowed: Bool) {
+        switch allowed {
+        case true:
+            self.currentLocationHoverBar.items = [mapBarButton!, sendButton!]
+        case false:
+            self.currentLocationHoverBar.items = [sendButton!]
+        }
     }
     
     // MARK - Error Handling
@@ -61,4 +74,25 @@ extension MessagesViewController: CLLocationManagerDelegate {
         }
     }
 
+}
+
+// MARK - Database access for last location information for centering the map on subsequent startups
+
+extension MessagesViewController {
+    
+    func save(latitude: Double, longitude: Double) {
+        UserDefaults.standard.set(longitude, forKey: "LastLongitude")
+        UserDefaults.standard.set(latitude, forKey: "LastLatitude")
+    }
+    
+    // using the object(forKey:) so that I can use optional binding to handle the case where no long and lat are stored in the database
+    // if I used double(forKey:) and there were no long or lat, the method would return 0, which is not the kind of error handling I want
+    func loadLastUserLocation() -> CLLocation? {
+        if let longitude = UserDefaults.standard.object(forKey: "LastLongitude") as? Double,
+            let latitude = UserDefaults.standard.object(forKey: "LastLatitude") as? Double { // FIXME - doesn't save latitude. may need to switch to double(forKey:)
+            return CLLocation(latitude: latitude, longitude: longitude)
+        }
+        return nil
+    }
+    
 }

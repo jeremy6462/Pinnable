@@ -22,6 +22,7 @@ class PinnedLocation: NSObject, MKAnnotation, Pinnable {
     }
     var placemark: MKPlacemark?
     var pinColor: UIColor = UIColor.green
+    var identifier: String = NSUUID().uuidString
     
     init(title: String? = nil, subtitle: String? = nil, coordinate: CLLocationCoordinate2D) {
         self.title = title
@@ -36,7 +37,7 @@ class SearchedLocation: NSObject, MKAnnotation, Pinnable {
     var coordinate: CLLocationCoordinate2D
     var placemark: MKPlacemark?
     var pinColor: UIColor = UIColor.red
-
+    var identifier: String = NSUUID().uuidString
     
     init(title: String? = nil, subtitle: String? = nil, coordinate: CLLocationCoordinate2D) {
         self.title = title
@@ -51,6 +52,7 @@ protocol Pinnable: MKAnnotation {
     var coordinate: CLLocationCoordinate2D { get set }
     var placemark: MKPlacemark? { get set }
     var pinColor: UIColor { get }
+    var identifier: String { get set }
 }
 
 // MARK - Handles pin dragging and dropping

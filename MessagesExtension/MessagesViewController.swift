@@ -31,6 +31,17 @@ class MessagesViewController: MSMessagesAppViewController {
     }
     
     @IBOutlet weak var currentLocationHoverBar: ISHHoverBar!
+    var mapBarButton: UIBarButtonItem? = nil
+    var sendButton: UIBarButtonItem? = nil
+    
+    var allowsLocationTracking = false {
+        didSet {
+            if mapBarButton != nil {
+                self.handle(userLocationAllowed: allowsLocationTracking)
+            }
+        }
+    }
+    
     @IBOutlet weak var searchHoverBar: ISHHoverBar!
     var searchButton: UIBarButtonItem? = nil
     var savePinsButton: UIBarButtonItem? = nil
@@ -43,6 +54,9 @@ class MessagesViewController: MSMessagesAppViewController {
         super.viewDidLoad()
         
         map.delegate = self
+        if let lastUserLocation = loadLastUserLocation() {
+            centerMapOnLocation(location: lastUserLocation)
+        }
         
         // location manager setup
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
@@ -53,9 +67,9 @@ class MessagesViewController: MSMessagesAppViewController {
         definesPresentationContext = true
         
         // hover bars
-        let mapBarButton = MKUserTrackingBarButtonItem(mapView: map)
-        let sendButton = hoverBarButton(imageName: "send", selector: #selector(sendLocations))
-        self.currentLocationHoverBar.items = [mapBarButton, sendButton]
+        mapBarButton = MKUserTrackingBarButtonItem(mapView: map)
+        sendButton = hoverBarButton(imageName: "send", selector: #selector(sendLocations))
+
         
         searchButton = hoverBarButton(imageName: "search", selector: #selector(searchButtonPressed))
         savePinsButton = hoverBarButton(imageName: "addLocation", selector: #selector(savePins))

@@ -90,7 +90,7 @@ extension MessagesViewController: MKMapViewDelegate {
     func addLocation() {
         if let selectedPin = selectedPin {
             self.map.removeAnnotation(selectedPin)
-            searchedPins = self.searchedPins.filter() { $0.placemark != selectedPin.placemark }
+            searchedPins = self.searchedPins.filter() { $0.identifier != selectedPin.identifier }
             
             let pinToSave = PinnedLocation(title: selectedPin.title!, subtitle: selectedPin.subtitle!, coordinate: selectedPin.coordinate)
             locations.append(pinToSave)
@@ -101,7 +101,7 @@ extension MessagesViewController: MKMapViewDelegate {
     func removeLocation() {
         if let selectedPin = selectedPin {
             self.map.removeAnnotation(selectedPin)
-            locations = locations.filter() { $0.placemark != selectedPin.placemark }
+            locations = locations.filter() { $0.identifier != selectedPin.identifier }
         }
     }
 
