@@ -29,6 +29,7 @@ class PinnedLocation: NSObject, MKAnnotation, Pinnable {
         self.coordinate = coordinate
         super.init()
     }
+
 }
 
 class SearchedLocation: NSObject, MKAnnotation, Pinnable {
@@ -81,7 +82,7 @@ extension Pinnable {
     }
 }
 
-// MARK - query items for iMessage Apps
+// MARK - query items for iMessage Apps and Database initalizer
 
 extension PinnedLocation {
     var queryItems: [URLQueryItem] {
@@ -120,8 +121,18 @@ extension PinnedLocation {
         
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         self.init(coordinate: coordinate)
-        
-        CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: latitude, longitude: longitude), completionHandler: {(placemarks, error) -> Void in
+        reverseGeocodeLocation()
+    }
+    
+    convenience init?(coordinates: [String: Double]) {
+        guard let latitude = coordinates[LAT_KEY], let longitude = coordinates[LONG_KEY] else { return nil }
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        self.init(coordinate: coordinate)
+        reverseGeocodeLocation()
+    }
+    
+    func reverseGeocodeLocation() {
+        CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: self.coordinate.latitude, longitude: self.coordinate.longitude), completionHandler: {(placemarks, error) -> Void in
             if error != nil {
                 print("Reverse geocoder failed with error \(error!.localizedDescription)")
                 return
@@ -136,6 +147,7 @@ extension PinnedLocation {
                 print("Problem with the data received from geocoder")
             }
         })
+
     }
 }
 

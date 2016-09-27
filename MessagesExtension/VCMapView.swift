@@ -95,6 +95,7 @@ extension MessagesViewController: MKMapViewDelegate {
             let pinToSave = PinnedLocation(title: selectedPin.title!, subtitle: selectedPin.subtitle!, coordinate: selectedPin.coordinate)
             locations.append(pinToSave)
             self.map.addAnnotation(pinToSave)
+            saveToDatabase(pin: pinToSave)
         }
     }
     
@@ -102,6 +103,7 @@ extension MessagesViewController: MKMapViewDelegate {
         if let selectedPin = selectedPin {
             self.map.removeAnnotation(selectedPin)
             locations = locations.filter() { $0.identifier != selectedPin.identifier }
+            removeFromDatabase(pin: selectedPin as! PinnedLocation)
         }
     }
 

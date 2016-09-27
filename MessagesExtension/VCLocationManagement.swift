@@ -34,7 +34,7 @@ extension MessagesViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             centerMapOnLocation(location: location)
-            save(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            saveLastUser(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         }
     }
     
@@ -76,23 +76,3 @@ extension MessagesViewController: CLLocationManagerDelegate {
 
 }
 
-// MARK - Database access for last location information for centering the map on subsequent startups
-
-extension MessagesViewController {
-    
-    func save(latitude: Double, longitude: Double) {
-        UserDefaults.standard.set(longitude, forKey: "LastLongitude")
-        UserDefaults.standard.set(latitude, forKey: "LastLatitude")
-    }
-    
-    // using the object(forKey:) so that I can use optional binding to handle the case where no long and lat are stored in the database
-    // if I used double(forKey:) and there were no long or lat, the method would return 0, which is not the kind of error handling I want
-    func loadLastUserLocation() -> CLLocation? {
-        if let longitude = UserDefaults.standard.object(forKey: "LastLongitude") as? Double,
-            let latitude = UserDefaults.standard.object(forKey: "LastLatitude") as? Double { // FIXME - doesn't save latitude. may need to switch to double(forKey:)
-            return CLLocation(latitude: latitude, longitude: longitude)
-        }
-        return nil
-    }
-    
-}
