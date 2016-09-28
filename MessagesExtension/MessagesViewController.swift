@@ -194,13 +194,23 @@ extension MessagesViewController: MapSearchDelegate {
     
     func dropPin(for placemark:MKPlacemark, saveToLocations save: Bool = true, dismissPresentedVC dismiss: Bool = false) {
         
-        // if the pin is not present, add it
+        // if the placemark has already been pinned, don't pin it
+        if isPinned(placemark: placemark) {
+            if dismiss {
+                self.dismiss(animated: true, completion: nil) // dismiss the presented location search table
+                return
+            } else {
+                return
+            }
+        }
+        
         var annotation: Pinnable
         if save {
             annotation = PinnedLocation(title: placemark.name, coordinate: placemark.coordinate)
             locations.append(annotation as! PinnedLocation)
             saveToDatabase(pin: annotation as! PinnedLocation)
             centerMapOnLocation(location: placemark.location!)
+
         } else {
             annotation = SearchedLocation(title: placemark.name, coordinate: placemark.coordinate)
             searchedPins.append(annotation as! SearchedLocation)
@@ -239,7 +249,21 @@ extension MessagesViewController: MapSearchDelegate {
         let region = MKCoordinateRegionMake(locationCenter, locationSpan)
         map.setRegion(region, animated: true)
     }
-
+    
+    // returns true if that pin was present. False if the pin was not present
+    func isPinned(placemark: MKPlacemark) -> Bool {
+        let latitude = placemark.coordinate.latitude
+        let longitude = placemark.coordinate.longitude
+        for annotation in map.annotations {
+            if let pin = annotation as? Pinnable {
+                if pin.coordinate.latitude == latitude && pin.coordinate.longitude == longitude {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+ 
     // TODO - refactor this to move the majority of the functionality to the location search table
     func search() {
         guard let locationSearchTable = self.locationSearchTable else { print("location table not present after search button pressed"); return }
@@ -365,7 +389,7 @@ extension MessagesViewController {
     func hoverBarButton(imageName: String, selector: Selector) -> UIBarButtonItem {
         let button = UIButton(frame: CGRect(origin: CGPoint(), size: CGSize(width: 30, height: 30)))
         button.setImage(UIImage(named: imageName)?.withRenderingMode(.alwaysOriginal), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10)
+        button.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         button.tintColor = .blue
         button.addTarget(self, action: selector, for: .touchUpInside)
         return UIBarButtonItem(customView: button)
