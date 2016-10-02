@@ -50,16 +50,17 @@ class MessagesViewController: MSMessagesAppViewController {
     
     @IBOutlet weak var map: MKMapView!
     
+    // called before all messages methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
         map.delegate = self
-        if let lastUserLocation = loadLastUserLocation() {
+        if let lastUserLocation = DatabaseManager.loadLastUserLocation() {
             centerMapOnLocation(location: lastUserLocation)
         }
         
         // location manager setup
-        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.distanceFilter = 10
         locationManager.delegate = self
         checkLocationAuthorizationStatus()
@@ -69,23 +70,20 @@ class MessagesViewController: MSMessagesAppViewController {
         // hover bars
         mapBarButton = MKUserTrackingBarButtonItem(mapView: map)
         sendButton = hoverBarButton(imageName: "send", selector: #selector(sendLocations))
-
-        
         searchButton = hoverBarButton(imageName: "search", selector: #selector(searchButtonPressed))
         savePinsButton = hoverBarButton(imageName: "addLocation", selector: #selector(savePins))
-        removePinsButton = hoverBarButton(imageName: "removeLocation", selector: #selector(removeSavedPins))
+        removePinsButton = hoverBarButton(imageName: "removeAllLocations", selector: #selector(removeSavedPins))
         
-        let lastUsedPins = lastPins()
+        let lastUsedPins = DatabaseManager.lastPins()
         if !lastUsedPins.isEmpty {
             locations = lastUsedPins
             map.removeAnnotations(map.annotations)
             map.addAnnotations(locations)
         }
         
-        reloadSearchHoverBar()
+        reloadSearchHoverBar() // load the hover bars after we've added saved pins so that the hover bar state reflects that of the pins on the map
         
         // pin drop set up
-        
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(addPin))
         map.addGestureRecognizer(gesture)
         
@@ -93,34 +91,34 @@ class MessagesViewController: MSMessagesAppViewController {
         
     }
     
-    
-    
+
     func addPin(gestureRecognizer:UIGestureRecognizer){
-        if gestureRecognizer.state == .began {
-            let touchPoint = gestureRecognizer.location(in: map)
-            let newCoordinates = map.convert(touchPoint, toCoordinateFrom: map)
+        if gestureRecognizer.state != .began { return }
+        
+        let touchPoint = gestureRecognizer.location(in: map)
+        let newCoordinates = map.convert(touchPoint, toCoordinateFrom: map)
+        
+        CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: newCoordinates.latitude, longitude: newCoordinates.longitude), completionHandler: {(placemarks, error) -> Void in
+            if error != nil {
+                print("Reverse geocoder failed with error \(error!.localizedDescription)")
+                return
+            }
             
-            CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: newCoordinates.latitude, longitude: newCoordinates.longitude), completionHandler: {(placemarks, error) -> Void in
-                if error != nil {
-                    print("Reverse geocoder failed with error \(error!.localizedDescription)")
-                    return
-                }
+            if let placemarks = placemarks , placemarks.count > 0 {
                 
-                if let placemarks = placemarks , placemarks.count > 0 {
-                    let placemark = placemarks[0]
-                    
-                    let annotation = PinnedLocation(title: placemark.name, coordinate: newCoordinates)
-                    annotation.placemark = MKPlacemark(placemark: placemark)
-                    annotation.subtitle = AddressParser.parse(placemark: MKPlacemark(placemark: placemark))
-                    self.map.addAnnotation(annotation)
-                    self.locations.append(annotation)
-                    self.saveToDatabase(pin: annotation)
-                }
-                else {
-                    print("Problem with the data received from geocoder")
-                }
-            })
-        }
+                let placemark = placemarks[0]
+                
+                let annotation = PinnedLocation(title: placemark.name, coordinate: newCoordinates)
+                annotation.placemark = MKPlacemark(placemark: placemark)
+                annotation.subtitle = AddressParser.parse(placemark: MKPlacemark(placemark: placemark))
+                self.map.addAnnotation(annotation)
+                self.locations.append(annotation)
+                DatabaseManager.save(pin: annotation)
+            }
+            else {
+                print("Problem with the data received from geocoder")
+            }
+        })
     }
 }
 
@@ -149,9 +147,10 @@ extension MessagesViewController {
     func handle(presentationStyle: MSMessagesAppPresentationStyle) {
         switch presentationStyle {
         case .compact:
+            self.dismiss(animated: false, completion: nil) // dismiss the possible locations search table 
             self.present(instructions!, animated: false, completion: nil)
         case .expanded:
-            self.dismiss(animated: false, completion: nil)
+            self.dismiss(animated: false, completion: nil) // dismiss the compact view
         }
     }
     
@@ -161,8 +160,8 @@ extension MessagesViewController {
     }
     
     func handle(received message: MSMessage) {
-        let url = message.url
-        guard let urlComponents = NSURLComponents(url: url!, resolvingAgainstBaseURL: false),
+        guard let url = message.url else { return }
+        guard let urlComponents = NSURLComponents(url: url, resolvingAgainstBaseURL: false),
             let queryItems = urlComponents.queryItems, queryItems.count % 2 == 0 else { return }
         var coordinates: [[URLQueryItem]] = []
         for i in 0..<queryItems.count {
@@ -174,10 +173,11 @@ extension MessagesViewController {
             }
         }
         map.removeAnnotations(map.annotations) // FIXME - this will delete user data if user has pins already on the map. TODO - Save users maps in Core Data
-        locations.forEach({ removeFromDatabase(pin: $0) }) // removing from db because we don't want pins that the user saved for this new map to affect their old map (currently in defaults) may be a bad reason
-        locations = coordinates.map{ PinnedLocation(queryItems: $0)! }
+        locations.forEach({ DatabaseManager.remove(pin: $0) }) // removing from db because we don't want pins that the user saved for this new map to affect their old map (currently in defaults) may be a bad reason
+        locations = coordinates.flatMap{ PinnedLocation(queryItems: $0) }
         // intentionally not saving these locations to the defaults because the user may not want these. If they want to see them, they can just look them up again by tapping the message
         map.addAnnotations(locations)
+        fitMapForPins()
     }
 
 }
@@ -208,7 +208,7 @@ extension MessagesViewController: MapSearchDelegate {
         if save {
             annotation = PinnedLocation(title: placemark.name, coordinate: placemark.coordinate)
             locations.append(annotation as! PinnedLocation)
-            saveToDatabase(pin: annotation as! PinnedLocation)
+            DatabaseManager.save(pin: annotation as! PinnedLocation)
             centerMapOnLocation(location: placemark.location!)
 
         } else {
@@ -230,44 +230,12 @@ extension MessagesViewController: MapSearchDelegate {
         for placemark in placemarks {
             self.dropPin(for: placemark, saveToLocations: false)
         }
-        fitMapRegionForSearchedPins()
-    }
-    
-    func fitMapRegionForSearchedPins() {
-        var upper = CLLocationCoordinate2D(latitude: -90.0, longitude: -90.0)
-        var lower = CLLocationCoordinate2D(latitude: 90.0, longitude: 90.0)
-        for pin in searchedPins {
-            if pin.coordinate.latitude > upper.latitude { upper.latitude = pin.coordinate.latitude }
-            if pin.coordinate.latitude < lower.latitude { lower.latitude = pin.coordinate.latitude }
-            if pin.coordinate.longitude > upper.longitude { upper.longitude = pin.coordinate.longitude }
-            if pin.coordinate.longitude < lower.longitude { lower.longitude = pin.coordinate.longitude }
-        }
-        
-        let locationSpan = MKCoordinateSpan(latitudeDelta: upper.latitude - lower.latitude, longitudeDelta: upper.longitude - lower.longitude)
-        let locationCenter = CLLocationCoordinate2D(latitude: (upper.latitude + lower.latitude) / 2, longitude: (upper.longitude + lower.longitude) / 2)
-        
-        let region = MKCoordinateRegionMake(locationCenter, locationSpan)
-        map.setRegion(region, animated: true)
-    }
-    
-    // returns true if that pin was present. False if the pin was not present
-    func isPinned(placemark: MKPlacemark) -> Bool {
-        let latitude = placemark.coordinate.latitude
-        let longitude = placemark.coordinate.longitude
-        for annotation in map.annotations {
-            if let pin = annotation as? Pinnable {
-                if pin.coordinate.latitude == latitude && pin.coordinate.longitude == longitude {
-                    return true
-                }
-            }
-        }
-        return false
+        fitMapForPins()
     }
  
-    // TODO - refactor this to move the majority of the functionality to the location search table
     func search() {
-        guard let locationSearchTable = self.locationSearchTable else { print("location table not present after search button pressed"); return }
         
+        guard let locationSearchTable = self.locationSearchTable else { print("location table not present after search button pressed"); return }
         // only drop pins for the addresses (don't include the suggested topics)
         let addresses = locationSearchTable.matchingItems.filter { return $0.subtitle != "" }
         for address in addresses {
@@ -278,7 +246,7 @@ extension MessagesViewController: MapSearchDelegate {
                     self.dropPin(for: placemark, saveToLocations: false)
                 }
                 if address == addresses.last {
-                    self.fitMapRegionForSearchedPins()
+                    self.fitMapForPins()
                 }
             }
         }
@@ -336,13 +304,13 @@ extension MessagesViewController {
             map.removeAnnotation(searchedPin)
             map.addAnnotation(pin)
             self.locations.append(pin)
-            saveToDatabase(pin: pin)
+            DatabaseManager.save(pin: pin)
         }
         searchedPins = []
     }
     
     func removeSavedPins() {
-        locations.forEach({ removeFromDatabase(pin: $0) })
+        locations.forEach({ DatabaseManager.remove(pin: $0) })
         locations = []
         self.map.removeAnnotations(self.map.annotations)
     }
@@ -363,7 +331,6 @@ extension MessagesViewController {
         UIGraphicsEndImageContext();
         
         let layout = MSMessageTemplateLayout()
-        layout.caption = "Pinnable Map"
         layout.image = image
         message.layout = layout
         
@@ -397,69 +364,4 @@ extension MessagesViewController {
     
 }
 
-// Database access
-
-let PINNABLE_DATABASE_KEY = "Pinnable_Saved_Pin_"
-
-extension MessagesViewController {
-    
-    // MARK - User's last locations
-    
-    func saveLastUser(latitude: Double, longitude: Double) {
-        UserDefaults.standard.set(longitude, forKey: "LastLongitude")
-        UserDefaults.standard.set(latitude, forKey: "LastLatitude")
-    }
-    
-    // using the object(forKey:) so that I can use optional binding to handle the case where no long and lat are stored in the database
-    // if I used double(forKey:) and there were no long or lat, the method would return 0, which is not the kind of error handling I want
-    func loadLastUserLocation() -> CLLocation? {
-        if let longitude = UserDefaults.standard.object(forKey: "LastLongitude") as? Double,
-            let latitude = UserDefaults.standard.object(forKey: "LastLatitude") as? Double { // FIXME - doesn't save latitude. may need to switch to double(forKey:)
-            return CLLocation(latitude: latitude, longitude: longitude)
-        }
-        return nil
-    }
-    
-    // MARK - Most recent pins
-    
-    func saveToDatabase(pin: PinnedLocation) {
-        let key = PINNABLE_DATABASE_KEY + pin.identifier
-        let value = encode(pin: pin)
-        let database = UserDefaults.standard
-        database.set(value, forKey: key)
-    }
-    
-    func lastPins() -> [PinnedLocation] {
-        
-        // an array of all the keys in the database that include the pinnable database key
-        let database = UserDefaults.standard
-        let savedPinKeys = database.dictionaryRepresentation().keys.filter({ $0.range(of: PINNABLE_DATABASE_KEY) != nil })
-        
-        var pins: [PinnedLocation] = []
-        for pinKey in savedPinKeys {
-            let savedPinCoordinates = database.dictionary(forKey: pinKey)
-            guard let savedPin = decode(coordinates: savedPinCoordinates as! [String : Double]) else { continue }
-            let identifier = pinKey.replacingOccurrences(of: PINNABLE_DATABASE_KEY, with: "")
-            savedPin.identifier = identifier
-            pins.append(savedPin)
-        }
-        return pins
-    }
-    
-    func removeFromDatabase(pin: PinnedLocation) {
-        let key = PINNABLE_DATABASE_KEY + pin.identifier
-        let database = UserDefaults.standard
-        database.removeObject(forKey: key)
-    }
-    
-    func encode(pin: PinnedLocation) -> [String: Double] {
-        return [LAT_KEY: pin.coordinate.latitude, LONG_KEY: pin.coordinate.longitude]
-    }
-    
-    func decode(coordinates: [String: Double]) -> PinnedLocation? {
-        return PinnedLocation(coordinates: coordinates) ?? nil
-    }
-    
-    
-}
 

@@ -10,7 +10,6 @@ import Foundation
 import MapKit
 
 
-// TODO - look into extension of CL/MKPlacemark
 struct AddressParser {
     
     static func parse(placemark: MKPlacemark) -> String {

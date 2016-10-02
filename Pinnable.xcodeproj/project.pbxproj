@@ -14,13 +14,13 @@
 		731573961D669B100037EDC2 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 731573941D669B100037EDC2 /* MainInterface.storyboard */; };
 		731573981D669B100037EDC2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 731573971D669B100037EDC2 /* Assets.xcassets */; };
 		731573A71D669C1A0037EDC2 /* ISHHoverBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 731573A61D669C1A0037EDC2 /* ISHHoverBar.m */; };
-		731573BC1D669C790037EDC2 /* VCMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B61D669C790037EDC2 /* VCMapView.swift */; };
+		731573BC1D669C790037EDC2 /* MapAnnotations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B61D669C790037EDC2 /* MapAnnotations.swift */; };
 		731573BD1D669C790037EDC2 /* LocationSearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B71D669C790037EDC2 /* LocationSearchTable.swift */; };
 		731573BE1D669C790037EDC2 /* PinnedLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B81D669C790037EDC2 /* PinnedLocation.swift */; };
 		731573BF1D669C790037EDC2 /* AddressParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573B91D669C790037EDC2 /* AddressParser.swift */; };
-		731573C01D669C790037EDC2 /* VCLocationManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573BA1D669C790037EDC2 /* VCLocationManagement.swift */; };
+		731573C01D669C790037EDC2 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731573BA1D669C790037EDC2 /* LocationManager.swift */; };
+		738C89061D9ECA2800C8286D /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738C89051D9ECA2800C8286D /* DatabaseManager.swift */; };
 		73A826111D81E99C002E1FDF /* CompactInstructionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A826101D81E99C002E1FDF /* CompactInstructionsViewController.swift */; };
-		73A826131D8212C7002E1FDF /* QueryItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A826121D8212C7002E1FDF /* QueryItems.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,13 +61,13 @@
 		731573A51D669C1A0037EDC2 /* ISHHoverBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISHHoverBar.h; sourceTree = "<group>"; };
 		731573A61D669C1A0037EDC2 /* ISHHoverBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ISHHoverBar.m; sourceTree = "<group>"; };
 		731573B41D669C780037EDC2 /* Pinnable-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Pinnable-Bridging-Header.h"; sourceTree = "<group>"; };
-		731573B61D669C790037EDC2 /* VCMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VCMapView.swift; sourceTree = "<group>"; };
+		731573B61D669C790037EDC2 /* MapAnnotations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapAnnotations.swift; sourceTree = "<group>"; };
 		731573B71D669C790037EDC2 /* LocationSearchTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationSearchTable.swift; sourceTree = "<group>"; };
 		731573B81D669C790037EDC2 /* PinnedLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinnedLocation.swift; sourceTree = "<group>"; };
 		731573B91D669C790037EDC2 /* AddressParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressParser.swift; sourceTree = "<group>"; };
-		731573BA1D669C790037EDC2 /* VCLocationManagement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VCLocationManagement.swift; sourceTree = "<group>"; };
+		731573BA1D669C790037EDC2 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		738C89051D9ECA2800C8286D /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		73A826101D81E99C002E1FDF /* CompactInstructionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompactInstructionsViewController.swift; sourceTree = "<group>"; };
-		73A826121D8212C7002E1FDF /* QueryItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryItems.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,14 +121,14 @@
 		731573911D669B100037EDC2 /* MessagesExtension */ = {
 			isa = PBXGroup;
 			children = (
-				731573921D669B100037EDC2 /* MessagesViewController.swift */,
 				73A826101D81E99C002E1FDF /* CompactInstructionsViewController.swift */,
+				731573921D669B100037EDC2 /* MessagesViewController.swift */,
 				731573B71D669C790037EDC2 /* LocationSearchTable.swift */,
-				731573B61D669C790037EDC2 /* VCMapView.swift */,
+				738C89051D9ECA2800C8286D /* DatabaseManager.swift */,
+				731573BA1D669C790037EDC2 /* LocationManager.swift */,
+				731573B61D669C790037EDC2 /* MapAnnotations.swift */,
 				731573B81D669C790037EDC2 /* PinnedLocation.swift */,
-				73A826121D8212C7002E1FDF /* QueryItems.swift */,
 				731573B91D669C790037EDC2 /* AddressParser.swift */,
-				731573BA1D669C790037EDC2 /* VCLocationManagement.swift */,
 				731573941D669B100037EDC2 /* MainInterface.storyboard */,
 				731573971D669B100037EDC2 /* Assets.xcassets */,
 				731573C21D669CBA0037EDC2 /* Bridging Headers */,
@@ -262,11 +262,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				731573BC1D669C790037EDC2 /* VCMapView.swift in Sources */,
+				731573BC1D669C790037EDC2 /* MapAnnotations.swift in Sources */,
 				731573BD1D669C790037EDC2 /* LocationSearchTable.swift in Sources */,
+				738C89061D9ECA2800C8286D /* DatabaseManager.swift in Sources */,
 				731573931D669B100037EDC2 /* MessagesViewController.swift in Sources */,
-				731573C01D669C790037EDC2 /* VCLocationManagement.swift in Sources */,
-				73A826131D8212C7002E1FDF /* QueryItems.swift in Sources */,
+				731573C01D669C790037EDC2 /* LocationManager.swift in Sources */,
 				731573BE1D669C790037EDC2 /* PinnedLocation.swift in Sources */,
 				73A826111D81E99C002E1FDF /* CompactInstructionsViewController.swift in Sources */,
 				731573BF1D669C790037EDC2 /* AddressParser.swift in Sources */,

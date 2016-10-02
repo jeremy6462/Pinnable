@@ -34,7 +34,8 @@ extension MessagesViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             centerMapOnLocation(location: location)
-            saveLastUser(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            DatabaseManager.saveLastUser(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            manager.stopUpdatingLocation() // we don't want the user's location to continue updating and moving the map. Just get the location the first time and the let the user move around the map
         }
     }
     

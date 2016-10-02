@@ -9,8 +9,6 @@
 import UIKit
 import MapKit
 
-// TODO - rename to MapSearcher
-
 class LocationSearchTable : UITableViewController {
     
     var resultSearchController: UISearchController? = nil
@@ -65,6 +63,10 @@ extension LocationSearchTable: MKLocalSearchCompleterDelegate {
 extension LocationSearchTable: UISearchBarDelegate, UISearchControllerDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if matchingItems.isEmpty {
+            searchBar.resignFirstResponder()
+            return
+        }
         self.mapSearchDelegate?.search()
         self.dismiss(animated: true, completion: nil)
     }

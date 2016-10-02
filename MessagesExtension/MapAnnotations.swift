@@ -30,7 +30,6 @@ extension MessagesViewController: MKMapViewDelegate {
             let car = UIImage(named: "car")
             directions.imageEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
             directions.setImage(car, for: .normal)
-            directions.backgroundColor = UIColor.blue
             view.leftCalloutAccessoryView = directions
             
             // add/remove from location list
@@ -95,7 +94,7 @@ extension MessagesViewController: MKMapViewDelegate {
             let pinToSave = PinnedLocation(title: selectedPin.title!, subtitle: selectedPin.subtitle!, coordinate: selectedPin.coordinate)
             locations.append(pinToSave)
             self.map.addAnnotation(pinToSave)
-            saveToDatabase(pin: pinToSave)
+            DatabaseManager.save(pin: pinToSave)
         }
     }
     
@@ -103,8 +102,55 @@ extension MessagesViewController: MKMapViewDelegate {
         if let selectedPin = selectedPin {
             self.map.removeAnnotation(selectedPin)
             locations = locations.filter() { $0.identifier != selectedPin.identifier }
-            removeFromDatabase(pin: selectedPin as! PinnedLocation)
+            DatabaseManager.remove(pin: selectedPin as! PinnedLocation)
         }
     }
 
+}
+
+// Pin related methods
+
+extension MessagesViewController {
+    
+    func mapHasPins() -> Bool {
+        let pins = map.annotations.flatMap({ $0 as? Pinnable })
+        return !pins.isEmpty
+    }
+    
+    func fitMapForPins() {
+        
+        let pins = map.annotations.flatMap({ $0 as? Pinnable })
+        if pins.isEmpty { return }
+        
+        var upper = CLLocationCoordinate2D(latitude: -90.0, longitude: -90.0)
+        var lower = CLLocationCoordinate2D(latitude: 90.0, longitude: 90.0)
+        
+        for pin in pins {
+            if pin.coordinate.latitude > upper.latitude { upper.latitude = pin.coordinate.latitude }
+            if pin.coordinate.latitude < lower.latitude { lower.latitude = pin.coordinate.latitude }
+            if pin.coordinate.longitude > upper.longitude { upper.longitude = pin.coordinate.longitude }
+            if pin.coordinate.longitude < lower.longitude { lower.longitude = pin.coordinate.longitude }
+        }
+        
+        let locationSpan = MKCoordinateSpan(latitudeDelta: upper.latitude - lower.latitude, longitudeDelta: upper.longitude - lower.longitude)
+        let locationCenter = CLLocationCoordinate2D(latitude: (upper.latitude + lower.latitude) / 2, longitude: (upper.longitude + lower.longitude) / 2)
+        
+        let region = MKCoordinateRegionMake(locationCenter, locationSpan)
+        map.setRegion(region, animated: true)
+    }
+    
+    // returns true if that pin was present. False if the pin was not present
+    func isPinned(placemark: MKPlacemark) -> Bool {
+        let latitude = placemark.coordinate.latitude
+        let longitude = placemark.coordinate.longitude
+        for annotation in map.annotations {
+            if let pin = annotation as? Pinnable {
+                if pin.coordinate.latitude == latitude && pin.coordinate.longitude == longitude {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
 }

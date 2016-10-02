@@ -86,13 +86,13 @@ extension Pinnable {
 
 extension PinnedLocation {
     var queryItems: [URLQueryItem] {
-        return [URLQueryItem(name: "lat", value: String(self.coordinate.latitude)),
-                URLQueryItem(name: "long", value: String(self.coordinate.longitude))]
+        return [URLQueryItem(name: LAT_KEY, value: String(self.coordinate.latitude)),
+                URLQueryItem(name: LONG_KEY, value: String(self.coordinate.longitude))]
     }
     
     // Pre-condition - query items should hold two elements, lat and long
     convenience init?(queryItems: [URLQueryItem]) {
-        if queryItems.count != 2 { return nil }
+        if queryItems.count != 2 { print("\(queryItems.count) given, 2 query items required to create pin"); return nil }
         
         var latitude: Double
         var longitude: Double
